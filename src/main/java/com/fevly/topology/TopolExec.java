@@ -11,17 +11,23 @@ import com.fevly.bolt.OutputBolt;
 
 
 public class TopolExec {
+
+    private static final String spoutID = "sourceTuplesID";
+    private static final String filterBoltID = "filteringBoltID";
+    private static final String aggBoltID = "aggregBoltID";
+    private static final String ouputBoldID = "printingAggregID";
+    
     public static void runTopology() throws Exception {
         TopologyBuilder builder = new TopologyBuilder();
-        builder.setSpout("sourceTuplesID", new RandSpout());
-        builder.setBolt("filteringBoltID", new FilterBolt()).shuffleGrouping("sourceTuplesID");
-        builder.setBolt("aggregBoltID", new AggregatorBolt()
+        builder.setSpout(spoutID, new RandSpout());
+        builder.setBolt(filterBoltID, new FilterBolt()).shuffleGrouping(spoutID);
+        builder.setBolt(aggBoltID, new AggregatorBolt()
                         .withTimestampField("timestamp")
                         .withLag(BaseWindowedBolt.Duration.seconds(1))
                         .withWindow(BaseWindowedBolt.Duration.seconds(2)))
-                .shuffleGrouping("filteringBoltID");
-        builder.setBolt("printingAggregID", new OutputBolt())
-                .shuffleGrouping("aggregBoltID");
+                .shuffleGrouping(filterBoltID);
+        builder.setBolt(ouputBoldID, new OutputBolt())
+                .shuffleGrouping(aggBoltID);
 
         Config config = new Config();
         config.setDebug(false);
