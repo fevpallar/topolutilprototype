@@ -1,0 +1,4 @@
+worker-id: fd87cc38-4e17-4c1d-9c88-77bc3ca2dab2
+logs.users: [ ]
+logs.groups: [ ]
+topology.submitter.user: Fevly
